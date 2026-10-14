@@ -19,6 +19,15 @@ app.use(express.json({ type: ['application/json', 'text/plain'], limit: '256kb' 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api', routes);
 
+// Friendly landing response so opening the API URL in a browser isn't a bare 404.
+app.get('/', (_req, res) => {
+  res.json({
+    service: 'User analytics API',
+    note: 'This is the backend. The dashboard is hosted separately.',
+    endpoints: ['/api/health', '/api/sessions', '/api/pages', '/api/heatmap?page=<url>', '/tracker.js', '/demo/index.html'],
+  });
+});
+
 app.use((err, _req, res, _next) => {
   if (err.type === 'entity.parse.failed') return res.status(400).json({ error: 'Body is not valid JSON.' });
   console.error(err);
